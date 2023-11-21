@@ -12,6 +12,7 @@ const scrypt = promisify(_scrypt);
 @Injectable()
 export class AuthService {
   constructor(private usersService: UserService) {}
+  
   async signup(name: string, email: string, password: string) {
     //See if email is in use
     const users = await this.usersService.find(email);
@@ -30,7 +31,7 @@ export class AuthService {
     // return the user
     return user;
   }
-  
+
   async signin(email: string, password: string) {
     const [user] = await this.usersService.find(email);
     if (!user) {
@@ -39,8 +40,8 @@ export class AuthService {
     const [salt, storedHash] = user.password.split('.');
     const hash = (await scrypt(password, salt, 32)) as Buffer;
 
-    if(storedHash !== hash.toString('hex')) {
-       throw new BadRequestException('Invalid password');
+    if (storedHash !== hash.toString('hex')) {
+      throw new BadRequestException('Invalid password');
     }
     return user;
   }
